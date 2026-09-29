@@ -34,8 +34,8 @@ footer button{background:#10160f;color:#cfe3d4;border:1px solid #1c3a26;border-r
 </main>
 <footer><button id="fixBtn">Painel não abre? Corrigir After Effects</button><button id="adminBtn">Admin</button></footer>
 <div id="modalCtn"></div>
-<script type="module">
-import { invoke } from '@tauri-apps/api/core';
+<script>
+const { invoke } = window.__TAURI__.core;
 const msg = (t) => { document.getElementById('msgEl').textContent = t; };
 document.getElementById('goBtn').onclick = async () => {
   const key = document.getElementById('keyInput').value.trim();

@@ -1,1 +1,1 @@
-{"identifier":"com.criamotion.installer.admin","productName":"CriaMotion Instalador (Admin)","version":"1.0.0","build":{"frontendDist":"../src"},"app":{"windows":[{"title":"CriaMotion - Instalador (Admin)","width":900,"height":650}]},"bundle":{"active":true,"targets":"all","icon":[]}
+{"identifier":"com.criamotion.installer.admin","productName":"CriaMotion Instalador (Admin)","version":"1.0.0","build":{"frontendDist":"../src"},"app":{"windows":[{"title":"CriaMotion - Instalador (Admin)","width":900,"height":650}]},"bundle":{"active":true,"targets":"all","icon":[]}}

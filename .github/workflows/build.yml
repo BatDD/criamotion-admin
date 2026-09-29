@@ -8,10 +8,17 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - run: dir src-tauri
+        shell: cmd
+      - run: type src-tauri\build.rs
+        shell: cmd
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
       - run: npm install
       - uses: tauri-apps/tauri-action@v0
         with:

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CriaMotion - Instalador (Admin)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#070b08;color:#e8f5ec;min-height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:12px 18px;background:#0a0d0b;border-bottom:1px solid #12351f;font-size:12px;letter-spacing:2px;color:#9fb3a6}
+header img{height:26px}
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 16px}
+.logo-big{height:64px;margin-bottom:10px}
+h1{margin:6px 0;font-size:34px;line-height:1.15;text-align:center}h1 span{color:#22e05e}
+p.sub{color:#9fb3a6;margin:0 0 22px}
+.card{width:100%;max-width:560px;background:#0e1511;border:1px solid #1c3a26;border-radius:14px;padding:18px}
+label{font-size:11px;letter-spacing:1px;color:#9fb3a6}
+input{width:100%;margin-top:8px;padding:14px;border-radius:10px;border:1px solid #1c3a26;background:#070b08;color:#fff;font-size:16px}
+button.go{margin-top:22px;min-width:280px;padding:15px;border-radius:12px;border:0;font-weight:800;font-size:15px;background:#22e05e;cursor:pointer}
+button.go:disabled{opacity:.5}
+#msgEl{margin-top:12px;font-size:13px;min-height:20px;color:#9fb3a6}
+footer{display:flex;justify-content:space-between;padding:12px;background:#0a0d0b;border-top:1px solid #12351f}
+footer button{background:#10160f;color:#cfe3d4;border:1px solid #1c3a26;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px}
+.box{width:100%;max-width:420px;background:#0e1511;border:1px solid #1c3a26;border-radius:14px;padding:18px}
+.row{display:flex;gap:8px;margin-top:10px}
+</style></head>
+<body>
+<header><img src="assets/logo.png"> CRIA MOTION &nbsp;·&nbsp; INSTALADOR (ADMIN REBUILD)</header>
+<main>
+<img class="logo-big" src="assets/logo.png">
+<h1>Ative seu<br><span>acesso.</span></h1>
+<p class="sub">Cole a chave recebida no e-mail para liberar a instalação.</p>
+<div class="card"><label>CHAVE DE ACESSO</label><input id="keyInput" placeholder="XXXXXXXX"></div>
+<button class="go" id="goBtn">Liberar acesso</button>
+<div id="msgEl"></div>
+</main>
+<footer><button id="fixBtn">Painel não abre? Corrigir After Effects</button><button id="adminBtn">Admin</button></footer>
+<div id="modalCtn"></div>
+<script type="module">
+import { invoke } from '@tauri-apps/api/core';
+const msg = (t) => { document.getElementById('msgEl').textContent = t; };
+document.getElementById('goBtn').onclick = async () => {
+  const key = document.getElementById('keyInput').value.trim();
+  if (!key) { msg('Digite a chave.'); return; }
+  document.getElementById('goBtn').disabled = true; msg('Validando...');
+  try {
+    const r = await invoke('validate_license', { key });
+    msg(r.message || 'OK');
+    if (r.success) { await invoke('start_installation', { key }); }
+  } catch (e) { msg(String(e)); }
+  document.getElementById('goBtn').disabled = false;
+};
+document.getElementById('fixBtn').onclick = async () => {
+  try { msg(await invoke('prepare_after_activation')); } catch (e) { msg(String(e)); }
+};
+document.getElementById('adminBtn').onclick = () => {
+  const m = document.getElementById('modalCtn');
+  m.innerHTML = '<div class="modal"><div class="box"><h3>Admin</h3><label>Login</label><input id="aU" value="Admin"><label style="margin-top:8px;display:block">Senha</label><input id="aP" type="password" value="Admin"><div class="row"><button class="go" id="aGo">Entrar</button><button id="aX">Fechar</button></div></div></div>';
+  m.querySelector('#aX').onclick = () => { m.innerHTML = ''; };
+  m.querySelector('#aGo').onclick = () => {
+    const u = m.querySelector('#aU').value, p = m.querySelector('#aP').value;
+    if (u === 'Admin' && p === 'Admin') {
+      sessionStorage.setItem('admin', '1');
+      document.getElementById('keyInput').value = 'ADMIN';
+      msg('Admin liberado: clique em Liberar acesso.');
+      m.innerHTML = '';
+    } else { alert('Login inválido'); }
+  };
+};
+</script></body></html>
